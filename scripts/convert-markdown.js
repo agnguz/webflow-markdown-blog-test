@@ -124,7 +124,8 @@ highlightedPre.properties.className = [
 
 // Prevent duplicate HTML class attributes
 delete highlightedPre.properties.class;
-
+  // Insert highlighted code into the article
+  node.children[i] = highlightedPre;
           }
 
         } else {
