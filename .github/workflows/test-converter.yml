@@ -1,0 +1,45 @@
+
+name: Test Markdown Converter
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  convert:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Convert Markdown to HTML
+        run: npm run convert
+
+      - name: Verify output
+        run: |
+          test -s output/article.html
+          test -s output/article.json
+          echo "Both output files generated successfully!"
+          echo "HTML preview:"
+          head -c 500 output/article.html
+          echo ""
+
+      - name: Upload converted files
+        uses: actions/upload-artifact@v4
+        with:
+          name: markdown-conversion-test
+          path: |
+            output/article.html
+            output/article.json
+          if-no-files-found: error
