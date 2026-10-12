@@ -1,0 +1,38 @@
+
+name: Test Webflow Connection
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test-webflow:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Verify Webflow CMS access
+        env:
+          WEBFLOW_API_TOKEN: ${{ secrets.WEBFLOW_API_TOKEN }}
+          WEBFLOW_COLLECTION_ID: ${{ vars.WEBFLOW_COLLECTION_ID }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          test -n "$WEBFLOW_API_TOKEN" || {
+            echo "::error::Missing WEBFLOW_API_TOKEN"
+            exit 1
+          }
+
+          test -n "$WEBFLOW_COLLECTION_ID" || {
+            echo "::error::Missing WEBFLOW_COLLECTION_ID"
+            exit 1
+          }
+
+          curl --fail-with-body --silent --show-error \
+            "https://api.webflow.com/v2/collections/${WEBFLOW_COLLECTION_ID}" \
+            --header "Authorization: Bearer ${WEBFLOW_API_TOKEN}" \
+            --header "Accept: application/json" \
+            --output collection.json
+
+          echo "Successfully connected to Webflow!"
+          jq -r '"Collection: " + .displayName' collection.json
+          jq -r '.fields[] | "Field: " + .displayName + " (" + .type + ")"' collection.json
