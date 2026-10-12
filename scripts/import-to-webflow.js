@@ -71,7 +71,7 @@ if (!bodyField) {
 }
 
 // Use a dedicated slug for our one-time test
-const testSlug = `${article.slug}-github-test`;
+const testSlug = `${article.slug}-shiki-test`;
 
 const fieldData = {
   name: article.title,
