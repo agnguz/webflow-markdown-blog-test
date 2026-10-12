@@ -115,13 +115,16 @@ function rehypeHighlightCode() {
 
           if (highlightedPre) {
             // Keep the language available for styling
-            highlightedPre.properties.className = [
-              'shiki',
-              'language-' + language
-            ];
+            
+highlightedPre.properties.className = [
+  'shiki',
+  'github-dark',
+  'language-' + language
+];
 
-            // Replace only the code block
-            node.children[i] = highlightedPre;
+// Prevent duplicate HTML class attributes
+delete highlightedPre.properties.class;
+
           }
 
         } else {
