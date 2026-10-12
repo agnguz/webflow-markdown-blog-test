@@ -1,0 +1,37 @@
+
+name: Import Markdown to Webflow
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: webflow-test-import
+  cancel-in-progress: false
+
+jobs:
+  import:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Convert Markdown to HTML
+        run: npm run convert
+
+      - name: Import draft to Webflow
+        env:
+          WEBFLOW_API_TOKEN: ${{ secrets.WEBFLOW_API_TOKEN }}
+          WEBFLOW_COLLECTION_ID: ${{ vars.WEBFLOW_COLLECTION_ID }}
+        run: node scripts/import-to-webflow.js
